@@ -1,0 +1,36 @@
+plugins {
+    id 'java'
+    id 'strukov_plugin'
+}
+
+version '1.3.5'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+}
+
+test {
+    //maxParralelForks - позволяет запускать тесты в нескольких потоках,
+    // одновременно. Максимальное кол-во потоков устанавливается значением.
+    //НО! WireMock - может выбрасывать ошибки при увеличении потоков.
+    maxParallelForks 2
+    useJUnitPlatform()
+}
+
+tasks.named('jar') {
+    manifest {
+        attributes('Implementation-Title': project.name,
+                'Implementation-Version': project.version,
+                'Main-Class': 'ru.clevertec.gradle.StringUtils')
+    }
+
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+    from configurations.runtimeClasspath.files.collect {
+        zipTree(it)
+    }
+}
